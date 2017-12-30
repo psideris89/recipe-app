@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>Cooking Recipes</h1>
+
+	<table>
+		<tr>
+			<th>ID</th>
+			<th>Description</th>
+		</tr>
+		<tr th:each="recipe : ${recipes}">
+			<td th:text="${recipe.id}">Default id</td>
+			<td th:text="${recipe.description}">Default description</td>
+		</tr>
+	</table>
+
+	<!--
+	<div th:each="recipe : ${recipes}">
+	<span th:text="${recipe.description}"></span>
+		<table class="table">
+			<tr>
+				<th>Preparation time (minutes)</th>
+				<th>Cooking time (minutes)</th>
+				<th>Servings</th>
+				<th>Source</th>
+				<th>Link</th>
+				<th>Difficulty</th>
+			</tr>
+			<tr>
+				<td th:text="${recipe.prepTime}"></td>
+				<td th:text="${recipe.cookTime}"></td>
+				<td th:text="${recipe.servings}"></td>
+				<td th:text="${recipe.source}"></td>
+				<td th:text="${recipe.url}"></td>
+				<td th:text="${recipe.difficulty}"></td>
+
+				
+                <td th:text="${recipe.ingridients}"></td>
+                <td th:text="${recipe.notes}"></td>
+		        
+			</tr>
+		</table>
+		<div class="container">
+			<span th:text="${recipe.directions}"></span>
+		</div>
+	</div>
+	-->
+</body>
+</html>
