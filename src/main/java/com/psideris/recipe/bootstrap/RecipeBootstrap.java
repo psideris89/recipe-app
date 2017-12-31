@@ -3,10 +3,7 @@ package com.psideris.recipe.bootstrap;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -22,6 +19,9 @@ import com.psideris.recipe.repositories.CategoryRepository;
 import com.psideris.recipe.repositories.RecipeRepository;
 import com.psideris.recipe.repositories.UnitOfMeasureRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -31,8 +31,8 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 
 	List<Recipe> recipes = new ArrayList<>();
 
-	public RecipeBootstrap(UnitOfMeasureRepository unitOfMeasureRepository, CategoryRepository categoryRepository,
-			RecipeRepository recipeRepository) {
+	public RecipeBootstrap(final UnitOfMeasureRepository unitOfMeasureRepository,
+			final CategoryRepository categoryRepository, final RecipeRepository recipeRepository) {
 		super();
 		this.unitOfMeasureRepository = unitOfMeasureRepository;
 		this.categoryRepository = categoryRepository;
@@ -40,36 +40,30 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 	}
 
 	@Override
-	public void onApplicationEvent(ContextRefreshedEvent event) {
+	public void onApplicationEvent(final ContextRefreshedEvent event) {
+		log.debug("Saved recipes to repository");
 		recipeRepository.saveAll(getRecipes());
 	}
 
+	@SuppressWarnings("unused")
 	public List<Recipe> getRecipes() {
 
-		Optional<UnitOfMeasure> teaspoonUomOptional = unitOfMeasureRepository.findByDescription("Teaspoon");
-		Optional<UnitOfMeasure> tablespoonUomOptional = unitOfMeasureRepository.findByDescription("Tablespoon");
-		Optional<UnitOfMeasure> cupUomOptional = unitOfMeasureRepository.findByDescription("Cup");
-		Optional<UnitOfMeasure> pinchUomOptional = unitOfMeasureRepository.findByDescription("Pinch");
-		Optional<UnitOfMeasure> ounceUomOptional = unitOfMeasureRepository.findByDescription("Ounce");
-		Optional<UnitOfMeasure> dashUomOptional = unitOfMeasureRepository.findByDescription("Dash");
-		Optional<UnitOfMeasure> eachUomOptional = unitOfMeasureRepository.findByDescription("Each");
+		log.debug("Initialising data (recipes)");
+		UnitOfMeasure teaspoonUom = getUomOrThrow("Teaspoon");
+		UnitOfMeasure tablespoonUom = getUomOrThrow("Tablespoon");
+		UnitOfMeasure cupUom = getUomOrThrow("Cup");
+		UnitOfMeasure pinchUom = getUomOrThrow("Pinch");
+		UnitOfMeasure ounceUom = getUomOrThrow("Ounce");
+		UnitOfMeasure dashUom = getUomOrThrow("Dash");
+		UnitOfMeasure eachUom = getUomOrThrow("Each");
 
-		validateOptionals(Arrays.asList(teaspoonUomOptional, tablespoonUomOptional, cupUomOptional, pinchUomOptional,
-				ounceUomOptional, dashUomOptional, eachUomOptional), UnitOfMeasure.class);
-
-		Optional<Category> americanCategoryOptional = categoryRepository.findByDescription("American");
-		Optional<Category> italianCategoryOptional = categoryRepository.findByDescription("Italian");
-		Optional<Category> mexicanCategoryOptional = categoryRepository.findByDescription("Mexican");
-		Optional<Category> fastFoodCategoryOptional = categoryRepository.findByDescription("Fast Food");
-		Optional<Category> greekCategoryOptional = categoryRepository.findByDescription("Greek");
-		Optional<Category> chineseCategoryOptional = categoryRepository.findByDescription("Chinese");
-		Optional<Category> indianCategoryOptional = categoryRepository.findByDescription("Indian");
-
-		validateOptionals(Arrays.asList(americanCategoryOptional, italianCategoryOptional, mexicanCategoryOptional,
-				fastFoodCategoryOptional, greekCategoryOptional, chineseCategoryOptional, indianCategoryOptional),
-				Category.class);
-
-		System.out.println("Validation Success");
+		Category americanCategory = getCategoryOrThrow("American");
+		Category italianCategory = getCategoryOrThrow("American");
+		Category mexicanCategory = getCategoryOrThrow("Mexican");
+		Category fastFoodCategory = getCategoryOrThrow("Fast Food");
+		Category greekCategory = getCategoryOrThrow("Greek");
+		Category chineseCategory = getCategoryOrThrow("Chinese");
+		Category indianCategory = getCategoryOrThrow("Indian");
 
 		Recipe r1 = new Recipe();
 		r1.setDescription("How to Make Perfect Guacamole");
@@ -103,28 +97,20 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 						+ "\n"
 						+ "To extend a limited supply of avocados, add either sour cream or cottage cheese to your guacamole dip. Purists may be horrified, but so what? It tastes great.");
 
-		/*
-		 * TODO
-		 */
 		r1.setNotes(n1);
-		n1.setRecipe(r1);
-		
-		r1.getIngredients().add(new Ingredient("rice avocados", BigDecimal.valueOf(2), eachUomOptional.get()));
-		r1.getIngredients().add(new Ingredient("Kosher salt", BigDecimal.valueOf(0.5), teaspoonUomOptional.get()));
-		r1.getIngredients().add(
-				new Ingredient("fresh lime juice or lemon juice", BigDecimal.valueOf(1), tablespoonUomOptional.get()));
-		r1.getIngredients().add(new Ingredient("minced red onion or thinly sliced green onion", BigDecimal.valueOf(2),
-				tablespoonUomOptional.get()));
-		r1.getIngredients().add(new Ingredient("serrano chiles, stems and seeds removed, minced", BigDecimal.valueOf(2),
-				eachUomOptional.get()));
-		r1.getIngredients().add(new Ingredient("cilantro (leaves and tender stems), finely chopped",
-				BigDecimal.valueOf(2), tablespoonUomOptional.get()));
-		r1.getIngredients()
-				.add(new Ingredient("freshly grated black pepper", BigDecimal.valueOf(1), dashUomOptional.get()));
-		r1.getIngredients().add(new Ingredient("ripe tomato, seeds and pulp removed, chopped", BigDecimal.valueOf(0.5),
-				eachUomOptional.get()));
 
-		r1.getCategories().addAll(Arrays.asList(americanCategoryOptional.get(), mexicanCategoryOptional.get()));
+		// @formatter:off
+		r1.addIngredient(new Ingredient("rice avocados", BigDecimal.valueOf(2), eachUom, r1));
+		r1.addIngredient(new Ingredient("Kosher salt", BigDecimal.valueOf(0.5), teaspoonUom, r1));
+		r1.addIngredient(new Ingredient("fresh lime juice or lemon juice", BigDecimal.valueOf(1), tablespoonUom, r1));
+		r1.addIngredient(new Ingredient("minced red onion or thinly sliced green onion", BigDecimal.valueOf(2), tablespoonUom, r1));
+		r1.addIngredient(new Ingredient("serrano chiles, stems and seeds removed, minced", BigDecimal.valueOf(2), eachUom, r1));
+		r1.addIngredient(new Ingredient("cilantro (leaves and tender stems), finely chopped", BigDecimal.valueOf(2), tablespoonUom, r1));
+		r1.addIngredient(new Ingredient("freshly grated black pepper", BigDecimal.valueOf(1), dashUom, r1));
+		r1.addIngredient(new Ingredient("ripe tomato, seeds and pulp removed, chopped", BigDecimal.valueOf(0.5), eachUom, r1));
+		// @formatter:on
+
+		r1.getCategories().addAll(Arrays.asList(americanCategory, mexicanCategory));
 
 		Recipe r2 = new Recipe();
 		r2.setDescription("Spicy Grilled Chicken Taco");
@@ -151,41 +137,32 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 				+ "Grill the chicken, then let it rest while you warm the tortillas. Now you are ready to assemble the tacos and dig in. The whole meal comes together in about 30 minutes!\n"
 				+ "\n" + "\n"
 				+ "Read more: http://www.simplyrecipes.com/recipes/spicy_grilled_chicken_tacos/#ixzz4jvu7Q0MJ");
+
 		n2.setRecipe(r2);
-		r2.setNotes(n2);
 
-		r2.getIngredients()
-				.add(new Ingredient("Ancho Chili Powder", new BigDecimal(2), tablespoonUomOptional.get(), r2));
-		r2.getIngredients().add(new Ingredient("Dried Oregano", new BigDecimal(1), teaspoonUomOptional.get(), r2));
-		r2.getIngredients().add(new Ingredient("Dried Cumin", new BigDecimal(1), teaspoonUomOptional.get(), r2));
-		r2.getIngredients().add(new Ingredient("Sugar", new BigDecimal(1), teaspoonUomOptional.get(), r2));
-		r2.getIngredients().add(new Ingredient("Salt", new BigDecimal(".5"), teaspoonUomOptional.get(), r2));
-		r2.getIngredients()
-				.add(new Ingredient("Clove of Garlic, Choppedr", new BigDecimal(1), eachUomOptional.get(), r2));
-		r2.getIngredients()
-				.add(new Ingredient("finely grated orange zestr", new BigDecimal(1), tablespoonUomOptional.get(), r2));
-		r2.getIngredients()
-				.add(new Ingredient("fresh-squeezed orange juice", new BigDecimal(3), tablespoonUomOptional.get(), r2));
-		r2.getIngredients().add(new Ingredient("Olive Oil", new BigDecimal(2), tablespoonUomOptional.get(), r2));
-		r2.getIngredients()
-				.add(new Ingredient("boneless chicken thighs", new BigDecimal(4), tablespoonUomOptional.get(), r2));
-		r2.getIngredients().add(new Ingredient("small corn tortillasr", new BigDecimal(8), eachUomOptional.get(), r2));
-		r2.getIngredients().add(new Ingredient("packed baby arugula", new BigDecimal(3), cupUomOptional.get(), r2));
-		r2.getIngredients()
-				.add(new Ingredient("medium ripe avocados, slic", new BigDecimal(2), eachUomOptional.get(), r2));
-		r2.getIngredients()
-				.add(new Ingredient("radishes, thinly sliced", new BigDecimal(4), eachUomOptional.get(), r2));
-		r2.getIngredients()
-				.add(new Ingredient("cherry tomatoes, halved", new BigDecimal(".5"), pinchUomOptional.get(), r2));
-		r2.getIngredients()
-				.add(new Ingredient("red onion, thinly sliced", new BigDecimal(".25"), eachUomOptional.get(), r2));
-		r2.getIngredients()
-				.add(new Ingredient("Roughly chopped cilantro", new BigDecimal(4), eachUomOptional.get(), r2));
-		r2.getIngredients().add(new Ingredient("cup sour cream thinned with 1/4 cup milk", new BigDecimal(4),
-				cupUomOptional.get(), r2));
-		r2.getIngredients().add(new Ingredient("lime, cut into wedges", new BigDecimal(4), eachUomOptional.get(), r2));
+		// @formatter:off
+		r2.addIngredient(new Ingredient("Ancho Chili Powder", new BigDecimal(2), tablespoonUom, r2));
+		r2.addIngredient(new Ingredient("Dried Oregano", new BigDecimal(1), teaspoonUom, r2));
+		r2.addIngredient(new Ingredient("Dried Cumin", new BigDecimal(1), teaspoonUom, r2));
+		r2.addIngredient(new Ingredient("Sugar", new BigDecimal(1), teaspoonUom, r2));
+		r2.addIngredient(new Ingredient("Salt", new BigDecimal(".5"), teaspoonUom, r2));
+		r2.addIngredient(new Ingredient("Clove of Garlic, Choppedr", new BigDecimal(1), eachUom, r2));
+		r2.addIngredient(new Ingredient("finely grated orange zestr", new BigDecimal(1), tablespoonUom, r2));
+		r2.addIngredient(new Ingredient("fresh-squeezed orange juice", new BigDecimal(3), tablespoonUom, r2));
+		r2.addIngredient(new Ingredient("Olive Oil", new BigDecimal(2), tablespoonUom, r2));
+		r2.addIngredient(new Ingredient("boneless chicken thighs", new BigDecimal(4), tablespoonUom, r2));
+		r2.addIngredient(new Ingredient("small corn tortillasr", new BigDecimal(8), eachUom, r2));
+		r2.addIngredient(new Ingredient("packed baby arugula", new BigDecimal(3), cupUom, r2));
+		r2.addIngredient(new Ingredient("medium ripe avocados, slic", new BigDecimal(2), eachUom, r2));
+		r2.addIngredient(new Ingredient("radishes, thinly sliced", new BigDecimal(4), eachUom, r2));
+		r2.addIngredient(new Ingredient("cherry tomatoes, halved", new BigDecimal(".5"), pinchUom, r2));
+		r2.addIngredient(new Ingredient("red onion, thinly sliced", new BigDecimal(".25"), eachUom, r2));
+		r2.addIngredient(new Ingredient("Roughly chopped cilantro", new BigDecimal(4), eachUom, r2));
+		r2.addIngredient(new Ingredient("cup sour cream thinned with 1/4 cup milk", new BigDecimal(4), cupUom, r2));
+		r2.addIngredient(new Ingredient("lime, cut into wedges", new BigDecimal(4), eachUom, r2));
+		// @formatter:on
 
-		r2.getCategories().addAll(Arrays.asList(americanCategoryOptional.get(), mexicanCategoryOptional.get()));
+		r2.getCategories().addAll(Arrays.asList(americanCategory, mexicanCategory));
 
 		recipes.addAll(Arrays.asList(r1, r2));
 
@@ -193,12 +170,13 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 
 	}
 
-	private void validateOptionals(List<Optional<?>> optionals, Class<?> cl) {
+	private UnitOfMeasure getUomOrThrow(final String arg) {
+		return unitOfMeasureRepository.findByDescription(arg)
+				.orElseThrow(() -> new RuntimeException("Failed to get Unit of measure"));
+	}
 
-		optionals.stream().forEach(o -> {
-			if (!o.isPresent()) {
-				throw new RuntimeException("Missing: " + cl.getName());
-			}
-		});
+	private Category getCategoryOrThrow(final String arg) {
+		return categoryRepository.findByDescription(arg)
+				.orElseThrow(() -> new RuntimeException("Failed to get Category"));
 	}
 }
