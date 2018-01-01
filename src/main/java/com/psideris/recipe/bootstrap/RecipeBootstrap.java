@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.psideris.recipe.model.Category;
 import com.psideris.recipe.model.Difficulty;
@@ -40,6 +41,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 	}
 
 	@Override
+	@Transactional
 	public void onApplicationEvent(final ContextRefreshedEvent event) {
 		log.debug("Saved recipes to repository");
 		recipeRepository.saveAll(getRecipes());

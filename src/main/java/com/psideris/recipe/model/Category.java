@@ -3,7 +3,6 @@ package com.psideris.recipe.model;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +22,7 @@ public class Category {
 
 	private String description;
 
-	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "categories")
+	@ManyToMany(mappedBy = "categories")
 	private Set<Recipe> recipes;
 
 }
