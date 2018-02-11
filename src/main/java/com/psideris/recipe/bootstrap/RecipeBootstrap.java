@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -20,11 +22,10 @@ import com.psideris.recipe.repositories.CategoryRepository;
 import com.psideris.recipe.repositories.RecipeRepository;
 import com.psideris.recipe.repositories.UnitOfMeasureRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Component
 public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEvent> {
+
+	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
 	private UnitOfMeasureRepository unitOfMeasureRepository;
 	private CategoryRepository categoryRepository;
@@ -43,14 +44,15 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 	@Override
 	@Transactional
 	public void onApplicationEvent(final ContextRefreshedEvent event) {
-		log.debug("Saved recipes to repository");
+
+		LOG.debug("Saved recipes to repository");
 		recipeRepository.saveAll(getRecipes());
 	}
 
 	@SuppressWarnings("unused")
 	public List<Recipe> getRecipes() {
 
-		log.debug("Initialising data (recipes)");
+		LOG.debug("Initialising data (recipes)");
 		UnitOfMeasure teaspoonUom = getUomOrThrow("Teaspoon");
 		UnitOfMeasure tablespoonUom = getUomOrThrow("Tablespoon");
 		UnitOfMeasure cupUom = getUomOrThrow("Cup");
