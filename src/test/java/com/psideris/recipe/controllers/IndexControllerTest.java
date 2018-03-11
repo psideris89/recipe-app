@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -64,9 +65,9 @@ public class IndexControllerTest {
 	public void testMockMvc() throws Exception {
 		recipes.addAll(Arrays.asList(recipeA, recipeB));
 		when(recipeService.getRecipes()).thenReturn(recipes);
-		mockMvc.perform(get("/index")).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.view().name("recipes"))
-				.andExpect(MockMvcResultMatchers.model().attribute("recipes", recipes));
+		mockMvc.perform(get("/")).andExpect(status().isOk())
+				.andExpect(view().name("index"))
+				.andExpect(model().attribute("recipes", recipes));
 	}
 
 	@Test
@@ -79,9 +80,9 @@ public class IndexControllerTest {
 
 		ArgumentCaptor<Set<Recipe>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
 
-		String underTest = indexController.getRecipes(model);
+		String underTest = indexController.getIndexPage(model);
 
-		assertEquals(underTest, "recipes");
+		assertEquals(underTest, "index");
 		verify(recipeService, times(1)).getRecipes();
 		verify(model, times(1)).addAttribute(eq("recipes"), argumentCaptor.capture());
 		Set<Recipe> setInController = argumentCaptor.getValue();

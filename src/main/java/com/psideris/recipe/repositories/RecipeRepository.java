@@ -4,6 +4,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.psideris.recipe.model.Recipe;
 
-public interface RecipeRepository extends CrudRepository<Recipe, Long>{
+import java.util.Optional;
 
+public interface RecipeRepository extends CrudRepository<Recipe, Long> {
 }
