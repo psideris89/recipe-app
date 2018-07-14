@@ -35,7 +35,7 @@ public class RecipeController {
         log.debug("Displaying form to add recipe");
         model.addAttribute("recipe", new RecipeCommand());
 
-        return "recipe/recipeform";
+        return "recipe/recipe-form";
     }
 
     @PostMapping("/recipe")
@@ -51,7 +51,7 @@ public class RecipeController {
         log.debug(String.format("Updating recipe with id %s", id));
         model.addAttribute("recipe", recipeService.getRecipeById(Long.valueOf(id)));
 
-        return REDIRECT + "recipe/recipeform";
+        return REDIRECT + "recipe/recipe-form";
     }
 
 }
