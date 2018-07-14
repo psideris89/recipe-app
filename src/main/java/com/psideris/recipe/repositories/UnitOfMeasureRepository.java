@@ -8,5 +8,5 @@ import com.psideris.recipe.model.UnitOfMeasure;
 
 public interface UnitOfMeasureRepository extends CrudRepository<UnitOfMeasure, Long>{
 
-	Optional<UnitOfMeasure> findByDescription(String description);
+    Optional<UnitOfMeasure> findByDescription(String description);
 }

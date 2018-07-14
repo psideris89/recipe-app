@@ -8,5 +8,5 @@ import com.psideris.recipe.model.Category;
 
 public interface CategoryRepository extends CrudRepository<Category, Long>{
 
-	Optional<Category> findByDescription(String description);
+    Optional<Category> findByDescription(String description);
 }

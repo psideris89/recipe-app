@@ -1,14 +1,13 @@
 package com.psideris.recipe.controllers;
 
-import com.psideris.recipe.model.Recipe;
+import com.psideris.recipe.services.RecipeService;
+import jdk.nashorn.internal.objects.annotations.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.psideris.recipe.services.RecipeService;
 
 @Controller
 public class IndexController {
@@ -21,7 +20,7 @@ public class IndexController {
         this.recipeService = recipeService;
     }
 
-    @RequestMapping({"", "/", "/index"})
+    @GetMapping({"", "/", "/index"})
     public String getIndexPage(Model model) {
         log.debug("Getting Index page");
 
