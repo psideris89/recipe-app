@@ -1,0 +1,15 @@
+app:
+  name: recipe-app
+
+server:
+  port: 8080
+
+spring:
+  thymeleaf:
+    cache: false
+
+logging:
+  level:
+     org.springframework.web: INFO
+     com.psideris: DEBUG
+     org.hibernate: INFO

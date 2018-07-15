@@ -3,6 +3,7 @@ package com.psideris.recipe.controllers;
 import com.psideris.recipe.commands.RecipeCommand;
 import com.psideris.recipe.model.Recipe;
 import com.psideris.recipe.services.RecipeService;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -10,10 +11,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
+@Slf4j
 @Controller
 public class RecipeController {
 
-    private static final Logger log = LoggerFactory.getLogger(RecipeController.class);
     private static final String REDIRECT = "redirect:/";
 
     private final RecipeService recipeService;
@@ -46,12 +47,19 @@ public class RecipeController {
         return REDIRECT + "recipe/" + savedRecipe.getId();
     }
 
-    @PutMapping("/recipe/{id}")
+    @GetMapping("/recipe/{id}/update")
     public String updateRecipe(@PathVariable String id, Model model) {
         log.debug(String.format("Updating recipe with id %s", id));
-        model.addAttribute("recipe", recipeService.getRecipeById(Long.valueOf(id)));
+        model.addAttribute("recipe", recipeService.getRecipeCommandById(Long.valueOf(id)));
 
-        return REDIRECT + "recipe/recipe-form";
+        return "recipe/recipe-form";
     }
 
+    @GetMapping("/recipe/{id}/delete")
+    public String deleteRecipe(@PathVariable final String id) {
+        log.debug("Deleting recipe");
+        recipeService.deleteRecipe(Long.valueOf(id));
+
+        return REDIRECT;
+    }
 }

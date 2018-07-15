@@ -62,7 +62,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         UnitOfMeasure eachUom = getUomOrThrow("Each");
 
         Category americanCategory = getCategoryOrThrow("American");
-        Category italianCategory = getCategoryOrThrow("American");
+        Category italianCategory = getCategoryOrThrow("Italian");
         Category mexicanCategory = getCategoryOrThrow("Mexican");
         Category fastFoodCategory = getCategoryOrThrow("Fast Food");
         Category greekCategory = getCategoryOrThrow("Greek");
@@ -114,7 +114,7 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         r1.addIngredient(new Ingredient("ripe tomato, seeds and pulp removed, chopped", BigDecimal.valueOf(0.5), eachUom, r1));
         // @formatter:on
 
-        r1.getCategories().addAll(Arrays.asList(americanCategory, mexicanCategory));
+        r1.getCategories().addAll(Arrays.asList(mexicanCategory));
 
         Recipe r2 = new Recipe();
         r2.setDescription("Spicy Grilled Chicken Taco");

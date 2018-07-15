@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import com.psideris.recipe.commands.IngredientCommand;
 import com.psideris.recipe.commands.RecipeCommand;
 import com.psideris.recipe.converters.RecipeCommandToRecipe;
 import com.psideris.recipe.converters.RecipeToRecipeCommand;
@@ -16,6 +17,8 @@ import com.psideris.recipe.repositories.RecipeRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+
+import static java.lang.String.format;
 
 @Slf4j
 @Service
@@ -43,12 +46,25 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Recipe getRecipeById(Long id) {
-        log.debug(String.format("Getting recipe with id %s", id));
+        log.debug(format("Getting recipe with id %s", id));
         Optional<Recipe> recipeOptional = recipeRepository.findById(id);
 
         recipeOptional.orElseThrow(() -> new RuntimeException("Recipe not Found!"));
 
         return recipeOptional.get();
+    }
+
+    @Override
+    @Transactional
+    public RecipeCommand getRecipeCommandById(Long id) {
+        return recipeToRecipeCommand.convert(getRecipeById(id));
+    }
+
+    @Override
+    @Transactional
+    public void deleteRecipe(Long id) {
+        log.debug(format("Deleting recipe with id %s", id));
+        recipeRepository.deleteById(id);
     }
 
     @Override
@@ -60,9 +76,4 @@ public class RecipeServiceImpl implements RecipeService {
 
         return recipeToRecipeCommand.convert(savedRecipe);
     }
-
-
-
-
-
 }
